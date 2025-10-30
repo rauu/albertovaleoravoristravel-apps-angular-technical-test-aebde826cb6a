@@ -1,0 +1,202 @@
+@if (loading()) {
+  <section class="flex justify-center items-center min-h-screen bg-gradient-to-br from-blue-50 to-blue-100" role="status"
+    aria-live="polite">
+    <div class="text-center" aria-busy="true">
+      <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-color-primary mx-auto mb-4"></div>
+      <p class="text-gray-600">{{ 'home.loading' | translate }}</p>
+    </div>
+  </section>
+} @else if (hotel?.id) {
+  <article class="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100" aria-labelledby="hotel-detail-heading">
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-40">
+      <div class="max-w-screen-xl mx-auto px-6 py-4">
+        <div class="flex items-center justify-between">
+          <button
+            type="button"
+            (click)="goBack()"
+            class="px-4 py-2 text-white text-sm font-bold rounded-lg transition bg-color-primary hover:shadow-lg"
+            [attr.aria-label]="'home.back' | translate">
+            ← {{ 'home.back' | translate }}
+          </button>
+          <h1 class="text-2xl font-bold text-color-primary" id="hotel-detail-heading">{{ hotel?.name }}</h1>
+          <div class="w-24"></div>
+        </div>
+      </div>
+    </header>
+
+    <div class="max-w-screen-xl mx-auto px-6 py-8">
+      <!-- Main Content Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Left: Image & Details -->
+        <section class="lg:col-span-2 space-y-8">
+          <!-- Hero Image -->
+          <figure>
+            <img [src]="hotel?.image" [alt]="hotel?.name" class="w-full h-96 object-cover rounded-xl shadow-lg">
+            <figcaption class="sr-only">{{ hotel?.name }} - {{ hotel?.stars }} {{ 'home.stars' | translate }}</figcaption>
+          </figure>
+
+          <!-- Basic Info -->
+          <section class="bg-white rounded-xl border border-gray-200 p-8 shadow-md"
+            aria-labelledby="hotel-basic-info-heading">
+            <h2 class="sr-only" id="hotel-basic-info-heading">{{ 'home.category' | translate }}</h2>
+            <div class="grid grid-cols-2 gap-6 mb-8">
+              <div>
+                <p class="text-sm text-gray-600 font-semibold mb-2">{{ 'home.category' | translate }}</p>
+                <p class="text-2xl font-bold text-color-primary">{{hotel?.stars}} ⭐</p>
+              </div>
+              <div>
+                <p class="text-sm text-gray-600 font-semibold mb-2">{{ 'home.rating' | translate }}</p>
+                <p class="text-2xl font-bold text-color-secondary">{{hotel?.rate}}/5</p>
+              </div>
+            </div>
+            <p class="text-gray-700 text-sm"><span class="font-semibold">{{ 'detail.address' | translate }}:</span> {{hotel?.address}}</p>
+          </section>
+
+          <!-- Description -->
+          <section class="bg-white rounded-xl border border-gray-200 p-8 shadow-md"
+            aria-labelledby="hotel-description-heading">
+            <h2 class="text-xl font-bold mb-4 text-color-primary" id="hotel-description-heading">{{ 'detail.description' | translate }}</h2>
+            <div class="space-y-4 text-gray-700 leading-relaxed text-sm">
+              <p>{{hotel?.name}} {{ 'detail.luxuryHotel' | translate }}</p>
+              <p>{{ 'detail.loremPart1' | translate }}</p>
+              <p>{{ 'detail.loremPart2' | translate }}</p>
+            </div>
+          </section>
+
+          <!-- Amenities -->
+          <section class="bg-white rounded-xl border border-gray-200 p-8 shadow-md"
+            aria-labelledby="hotel-amenities-heading">
+            <h2 class="text-xl font-bold mb-4 text-color-primary" id="hotel-amenities-heading">{{ 'detail.amenities' | translate }}</h2>
+            <ul class="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <li class="flex items-center gap-3">
+                <span class="text-2xl" aria-hidden="true">🏊</span>
+                <span class="text-sm font-semibold text-gray-700">{{ 'detail.pool' | translate }}</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="text-2xl" aria-hidden="true">🍽️</span>
+                <span class="text-sm font-semibold text-gray-700">{{ 'detail.restaurant' | translate }}</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="text-2xl" aria-hidden="true">🏋️</span>
+                <span class="text-sm font-semibold text-gray-700">{{ 'detail.gym' | translate }}</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="text-2xl" aria-hidden="true">🛎️</span>
+                <span class="text-sm font-semibold text-gray-700">{{ 'detail.service24h' | translate }}</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="text-2xl" aria-hidden="true">📶</span>
+                <span class="text-sm font-semibold text-gray-700">{{ 'detail.freeWifi' | translate }}</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="text-2xl" aria-hidden="true">🅿️</span>
+                <span class="text-sm font-semibold text-gray-700">{{ 'detail.parking' | translate }}</span>
+              </li>
+            </ul>
+          </section>
+        </section>
+
+        <!-- Right: Booking Card -->
+  <aside class="lg:col-span-1" [attr.aria-label]="'home.bookNow' | translate">
+          <div class="bg-white rounded-xl border border-gray-200 p-8 shadow-md sticky top-24">
+            <!-- Price -->
+            <div class="mb-8 pb-8 border-b border-gray-200">
+              <p class="text-sm text-gray-600 font-semibold mb-2">{{ 'detail.pricePerNight' | translate }}</p>
+              <p class="text-4xl font-bold text-color-primary">{{hotel?.price | number:'1.0-0'}}€</p>
+            </div>
+
+            <!-- Booking Info -->
+            <div class="mb-8 space-y-4">
+              <div>
+                <label class="text-sm font-semibold text-gray-900 block mb-2">{{ 'detail.checkIn' | translate }}</label>
+                <p-datepicker
+                  class="w-full"
+                  inputId="check-in"
+                  name="checkIn"
+                  required
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  showIcon
+                  iconDisplay="input"
+                  [minDate]="minCheckInDate"
+                  inputStyleClass="w-full"
+                  [(ngModel)]="checkInDate"
+                  (ngModelChange)="onCheckInChange($event)"
+                  #checkInModel="ngModel">
+                </p-datepicker>
+                @if (checkInModel.invalid && checkInModel.touched) {
+                  <small class="text-xs text-red-500">
+                    {{ 'detail.checkInValidation' | translate }}
+                  </small>
+                }
+              </div>
+              <div>
+                <label class="text-sm font-semibold text-gray-900 block mb-2">{{ 'detail.checkOut' | translate }}</label>
+                <p-datepicker
+                  class="w-full"
+                  inputId="check-out"
+                  name="checkOut"
+                  required
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  showIcon
+                  iconDisplay="input"
+                  [minDate]="minCheckOutDate"
+                  [disabled]="!checkInDate"
+                  inputStyleClass="w-full"
+                  [(ngModel)]="checkOutDate"
+                  (ngModelChange)="onCheckOutChange($event)"
+                  #checkOutModel="ngModel">
+                </p-datepicker>
+                @if (checkOutModel.invalid && checkOutModel.touched) {
+                  <small class="text-xs text-red-500">
+                    {{ 'detail.checkOutValidation' | translate }}
+                  </small>
+                }
+              </div>
+              <div>
+                <label class="text-sm font-semibold text-gray-900 block mb-2">{{ 'detail.guests' | translate }}</label>
+                <p-select
+                  [(ngModel)]="selectedGuests"
+                  [options]="guestOptions()"
+                  optionLabel="label"
+                  optionValue="value"
+                  class="w-full">
+                </p-select>
+              </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="space-y-3">
+              <button
+                type="button"
+                (click)="bookNow()"
+                class="w-full py-3 text-white text-sm font-bold rounded-lg transition hover:shadow-lg active:scale-95 bg-color-secondary">
+                {{ 'home.bookNow' | translate }}
+              </button>
+              <button
+                type="button"
+                (click)="goBack()"
+                class="w-full py-3 text-sm font-bold rounded-lg transition border-2 border-color-primary text-color-primary hover:bg-blue-50 active:scale-95">
+                {{ 'detail.backToList' | translate }}
+              </button>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </article>
+} @else {
+  <section class="flex justify-center items-center min-h-screen bg-gray-50" role="alert">
+    <div class="text-center">
+      <p class="text-gray-600 text-lg mb-4">{{ 'detail.notFound' | translate }}</p>
+      <button
+        type="button"
+        (click)="goBack()"
+        class="px-6 py-2 text-white text-sm font-bold rounded-lg transition hover:shadow-lg active:scale-95 bg-color-primary">
+        {{ 'detail.backToList' | translate }}
+      </button>
+    </div>
+  </section>
+}

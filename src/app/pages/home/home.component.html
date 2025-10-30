@@ -1,0 +1,80 @@
+@if (loading()) {
+  <section class="flex justify-center items-center h-screen bg-gray-50" role="status" aria-live="polite">
+    <div class="text-center" aria-busy="true">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-color-secondary"></div>
+      <p class="text-gray-600">{{ 'home.loading' | translate }}</p>
+    </div>
+  </section>
+} @else {
+  <section class="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100" aria-labelledby="hotels-heading">
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm">
+      <div class="max-w-screen-xl mx-auto px-6 py-5">
+        <div class="flex items-center justify-between gap-4">
+          <h1 class="text-3xl font-bold text-color-primary" id="hotels-heading">{{ 'home.title' | translate }}</h1>
+          <div class="flex gap-3">
+            @if (hasActiveFilters()) {
+              <button
+                (click)="clearFilters()"
+                class="px-4 py-2 text-white text-sm font-semibold rounded-lg transition bg-color-primary hover:shadow-lg">
+                {{ 'home.clearFilters' | translate }}
+              </button>
+            }
+            <button
+              (click)="toggleFilters()"
+              class="px-4 py-2 text-white text-sm font-semibold rounded-lg transition bg-color-secondary hover:shadow-lg">
+              {{ showFilters() ? ('home.hide' | translate) : ('home.filters' | translate) }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="max-w-screen-xl mx-auto px-6 py-8">
+      <!-- Filters Section -->
+      @if (showFilters()) {
+        <section class="mb-8" [attr.aria-label]="('home.filters' | translate)">
+          <app-hotel-filters
+            [nameFilter]="nameFilter()"
+            [selectedStars]="selectedStars()"
+            [ratingValue]="ratingValue()"
+            [priceValue]="priceValue()"
+            [starsOptions]="starsOptions"
+            (onNameChangeOutput)="onNameChange($event)"
+            (onStarToggleOutput)="toggleStar($event)"
+            (onRatingChangeOutput)="onRatingChange($event)"
+            (onPriceChangeOutput)="onPriceChange($event)"
+            (onClearFiltersOutput)="clearFilters()">
+          </app-hotel-filters>
+        </section>
+      }
+
+      <!-- Hotels Grid -->
+      <section class="grid gap-6 mb-12 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+        [attr.aria-label]="('home.title' | translate)">
+        @for (hotel of hotels(); track trackByHotelId($index, hotel)) {
+          <app-hotel-card
+            [hotel]="hotel"
+            (onViewDetails)="viewHotelDetails($event)">
+          </app-hotel-card>
+        } @empty {
+          <p class="col-span-full text-center py-16 text-gray-600 text-lg">{{ 'home.noResults' | translate }}</p>
+        }
+      </section>
+
+      <!-- PrimeNG Paginator -->
+      @if (totalRecords() > 0) {
+        <nav class="flex justify-center mt-8" aria-label="Pagination">
+          <p-paginator
+            [first]="(currentPage() - 1) * pageSize"
+            [rows]="pageSize"
+            [totalRecords]="totalRecords()"
+            (onPageChange)="onPageChange($event)"
+            [showCurrentPageReport]="true"
+            currentPageReportTemplate="{{ currentPage() }} / {{ getTotalPages() }}">
+          </p-paginator>
+        </nav>
+      }
+    </div>
+  </section>
+}

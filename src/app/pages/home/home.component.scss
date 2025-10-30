@@ -1,0 +1,103 @@
+:host ::ng-deep {
+  .p-slider {
+    .p-slider-handle {
+      background-color: var(--color-secondary);
+      border-color: var(--color-secondary);
+      width: 22px;
+      height: 22px;
+      box-shadow: 0 2px 8px rgba(0, 208, 132, 0.3);
+
+      &:hover {
+        background-color: var(--color-accent);
+        border-color: var(--color-accent);
+        box-shadow: 0 4px 12px rgba(0, 199, 183, 0.5);
+      }
+    }
+
+    .p-slider-range {
+      background-color: var(--color-secondary);
+    }
+
+    .p-slider-track {
+      background-color: #e9ecef;
+    }
+  }
+
+  .p-paginator {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+
+    .p-paginator-element {
+      padding: 0.5rem 0.75rem;
+      border: 1px solid #dee2e6;
+      border-radius: 0.5rem;
+      color: #212529;
+      background-color: transparent;
+      font-weight: 600;
+      transition: all 200ms ease;
+
+      &:hover:not(.p-disabled) {
+        background-color: #f0f3f7;
+        border-color: var(--color-secondary);
+        color: var(--color-secondary);
+        transform: translateY(-2px);
+      }
+
+      &.p-highlight {
+        background-color: var(--color-primary);
+        color: white;
+        border-color: var(--color-primary);
+        font-weight: 700;
+        box-shadow: 0 4px 12px rgba(0, 82, 204, 0.25);
+      }
+
+      &.p-state-highlight {
+        background-color: var(--color-primary) !important;
+        border-color: var(--color-primary) !important;
+      }
+    }
+
+    .p-paginator-first,
+    .p-paginator-prev,
+    .p-paginator-next,
+    .p-paginator-last {
+      padding: 0.5rem 0.75rem;
+      color: var(--color-primary);
+      font-weight: 600;
+
+      &:hover:not(.p-disabled) {
+        color: var(--color-secondary);
+      }
+    }
+  }
+
+  .p-inputtext {
+    border-color: #dee2e6;
+    transition: all 200ms ease;
+    font-weight: 500;
+
+    &:focus {
+      border-color: var(--color-secondary);
+      box-shadow: 0 0 0 4px rgba(0, 208, 132, 0.1);
+    }
+
+    &.p-focus {
+      border-color: var(--color-secondary) !important;
+      box-shadow: 0 0 0 4px rgba(0, 208, 132, 0.1) !important;
+    }
+  }
+
+  .p-component {
+    --p-primary-color: var(--color-primary);
+    --p-primary-600: var(--color-secondary);
+    --p-primary-700: var(--color-secondary);
+    --p-highlight-background: var(--color-secondary);
+    --p-highlight-text-color: white;
+    --p-success-color: var(--color-secondary);
+    --p-success-600: var(--color-accent);
+  }
+}
+
+
+

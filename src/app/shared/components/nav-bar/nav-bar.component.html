@@ -1,0 +1,31 @@
+<nav class="bg-white border-b border-gray-200">
+  <div class="mx-auto px-4 py-4 flex justify-between items-center">
+    <a class="flex items-center gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-color-secondary"
+      [routerLink]="['/']" attr.aria-label="{{ 'navbar.title' | translate }}">
+      <img src="assets/logo.png" alt="Avoristech Travel" class="h-8 w-auto" />
+      <span class="sr-only">{{ 'navbar.title' | translate }}</span>
+    </a>
+
+    <div class="flex flex-col items-end">
+      <label for="language-switcher" class="sr-only">{{ 'navbar.language' | translate }}</label>
+      <p-select inputId="language-switcher" [options]="languages" [(ngModel)]="selectedLanguage" optionLabel="name"
+        (onChange)="onLanguageChange($event)" [showClear]="false" [style]="{ minWidth: '150px' }"
+        [attr.aria-label]="'navbar.language' | translate">
+        <ng-template pTemplate="selectedItem">
+          @if (selectedLanguage) {
+            <div class="flex items-center gap-2 text-sm">
+              <span>{{ selectedLanguage.flag }}</span>
+              <span>{{ selectedLanguage.name }}</span>
+            </div>
+          }
+        </ng-template>
+        <ng-template let-language pTemplate="item">
+          <div class="flex items-center gap-2 text-sm">
+            <span>{{ language.flag }}</span>
+            <span>{{ language.name }}</span>
+          </div>
+        </ng-template>
+      </p-select>
+    </div>
+  </div>
+</nav>

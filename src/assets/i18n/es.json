@@ -1,0 +1,63 @@
+{
+  "navbar": {
+    "title": "Avoristech Travel",
+    "language": "Idioma"
+  },
+  "home": {
+    "title": "Hoteles",
+    "search": "Buscar por nombre...",
+    "filters": "Filtros",
+    "hide": "Ocultar",
+    "loading": "Cargando hoteles...",
+    "category": "Categoría",
+    "minRating": "Valoración mínima",
+    "maxPrice": "Precio máximo",
+    "clearFilters": "Limpiar filtros",
+    "noResults": "No se encontraron hoteles con los criterios seleccionados",
+    "rating": "Valoración",
+    "perNight": "por noche",
+    "viewDetails": "Ver detalles",
+    "back": "Volver",
+    "bookNow": "Reservar Ahora",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "filterHotels": "Filtrar Hoteles",
+    "hotelName": "Nombre del Hotel",
+    "searchByName": "Buscar por nombre...",
+    "stars": "Estrellas",
+    "price": "Precio"
+  },
+  "detail": {
+    "address": "Dirección",
+    "description": "Descripción del Hotel",
+    "amenities": "Servicios y Amenidades",
+    "pricePerNight": "Precio por noche",
+    "checkIn": "Check-in",
+    "checkOut": "Check-out",
+    "guests": "Huéspedes",
+    "notFound": "Hotel no encontrado",
+    "backToList": "Volver al Listado",
+    "pool": "Piscina",
+    "restaurant": "Restaurante",
+    "gym": "Gimnasio",
+    "service24h": "Servicio 24/7",
+    "freeWifi": "WiFi Gratis",
+    "parking": "Estacionamiento",
+    "luxuryHotel": "es un hotel de lujo que ofrece una experiencia excepcional a sus huéspedes. Ubicado estratégicamente, este establecimiento combina comodidad, elegancia y servicio de primera clase.",
+    "loremPart1": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+    "loremPart2": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    "guest1": "1 Huésped",
+    "guest2": "2 Huéspedes",
+    "guest3": "3 Huéspedes",
+    "guest4": "4 Huéspedes",
+    "guest5": "5+ Huéspedes",
+    "checkInValidation": "Elige una fecha de entrada desde hoy en adelante.",
+    "checkOutValidation": "Elige una fecha de salida posterior a la entrada."
+  },
+  "seo": {
+    "homeTitle": "Hoteles | Avoristech Travel",
+    "homeDescription": "Explora y compara hoteles de Avoristech Travel por nombre, estrellas, valoración y precio para planificar tu estancia.",
+    "detailTitle": "{{ hotel }} | Avoristech Travel",
+    "detailDescription": "Descubre {{ hotel }}, con valoración de {{ rating }}/5 y disponible desde {{ price }} por noche con Avoristech Travel."
+  }
+}

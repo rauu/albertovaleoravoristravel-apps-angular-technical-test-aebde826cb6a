@@ -1,0 +1,63 @@
+{
+  "navbar": {
+    "title": "Avoristech Travel",
+    "language": "Language"
+  },
+  "home": {
+    "title": "Hotels",
+    "search": "Search by name...",
+    "filters": "Filters",
+    "hide": "Hide",
+    "loading": "Loading hotels...",
+    "category": "Category",
+    "minRating": "Minimum Rating",
+    "maxPrice": "Maximum Price",
+    "clearFilters": "Clear Filters",
+    "noResults": "No hotels found matching your criteria",
+    "rating": "Rating",
+    "perNight": "per night",
+    "viewDetails": "View Details",
+    "back": "Back",
+    "bookNow": "Book Now",
+    "previous": "Previous",
+    "next": "Next",
+    "filterHotels": "Filter Hotels",
+    "hotelName": "Hotel Name",
+    "searchByName": "Search by name...",
+    "stars": "Stars",
+    "price": "Price"
+  },
+  "detail": {
+    "address": "Address",
+    "description": "Hotel Description",
+    "amenities": "Services & Amenities",
+    "pricePerNight": "Price per night",
+    "checkIn": "Check-in",
+    "checkOut": "Check-out",
+    "guests": "Guests",
+    "notFound": "Hotel not found",
+    "backToList": "Back to List",
+    "pool": "Pool",
+    "restaurant": "Restaurant",
+    "gym": "Gym",
+    "service24h": "24/7 Service",
+    "freeWifi": "Free WiFi",
+    "parking": "Parking",
+    "luxuryHotel": "is a luxury hotel that offers an exceptional experience to its guests. Strategically located, this establishment combines comfort, elegance and first-class service.",
+    "loremPart1": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+    "loremPart2": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    "guest1": "1 Guest",
+    "guest2": "2 Guests",
+    "guest3": "3 Guests",
+    "guest4": "4 Guests",
+    "guest5": "5+ Guests",
+    "checkInValidation": "Please choose a check-in date from today onwards.",
+    "checkOutValidation": "Please choose a check-out date after your check-in."
+  },
+  "seo": {
+    "homeTitle": "Hotels | Avoristech Travel",
+    "homeDescription": "Browse and compare Avoristech Travel hotels by name, stars, rating and price to plan your stay.",
+    "detailTitle": "{{ hotel }} | Avoristech Travel",
+    "detailDescription": "Discover {{ hotel }}, rated {{ rating }}/5 and available from {{ price }} per night with Avoristech Travel."
+  }
+}

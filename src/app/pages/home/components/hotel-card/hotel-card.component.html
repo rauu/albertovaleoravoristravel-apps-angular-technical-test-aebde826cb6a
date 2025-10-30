@@ -1,0 +1,48 @@
+<article class="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-all group"
+  [attr.aria-labelledby]="hotel?.id ? 'hotel-' + hotel?.id : null">
+  <!-- Hotel Image -->
+  <figure class="relative h-56 overflow-hidden bg-gray-100">
+    <img
+      [src]="hotel?.image"
+      [alt]="hotel?.name"
+      class="w-full h-full object-cover group-hover:scale-110 transition"
+    />
+    <figcaption class="sr-only">
+      {{ hotel?.name }} - {{ hotel?.stars }} {{ 'home.stars' | translate }}
+    </figcaption>
+    <div class="absolute top-3 right-3 bg-white px-3 py-1 rounded-full shadow-md" style="border: 1px solid var(--color-secondary)">
+      <span class="text-sm font-semibold" style="color: var(--color-primary)">{{ hotel?.stars }}⭐</span>
+    </div>
+  </figure>
+
+  <!-- Hotel Info -->
+  <div class="p-4">
+    <h3 class="text-lg font-semibold mb-1 line-clamp-2" style="color: var(--color-primary)"
+      [id]="hotel?.id ? 'hotel-' + hotel?.id : null">
+      {{ hotel?.name }}
+    </h3>
+    <p class="text-sm text-gray-600 mb-4 line-clamp-1">{{ hotel?.address }}</p>
+
+    <!-- Rating and Price -->
+    <div class="flex items-center justify-between mb-4 pb-4 border-b border-gray-200">
+      <div class="flex items-center gap-2">
+        <span class="text-sm text-gray-600">{{ 'home.rating' | translate }}</span>
+        <span class="text-sm font-semibold" style="color: var(--color-secondary)">{{ hotel?.rate }}/5</span>
+      </div>
+      <div class="text-right">
+        <span class="text-2xl font-bold" style="color: var(--color-primary)">{{ hotel?.price | number:'1.0-0' }}€</span>
+        <p class="text-xs text-gray-600">{{ 'home.perNight' | translate }}</p>
+      </div>
+    </div>
+
+    <!-- Action Button -->
+    <button
+      type="button"
+      (click)="viewDetails()"
+      class="w-full py-2 text-white text-sm font-medium rounded-lg transition"
+      [attr.aria-label]="(hotel?.name || '') + ' - ' + ('home.viewDetails' | translate)"
+      style="background-color: var(--color-primary)">
+      {{ 'home.viewDetails' | translate }}
+    </button>
+  </div>
+</article>

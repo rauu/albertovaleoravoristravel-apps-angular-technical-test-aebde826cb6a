@@ -1,0 +1,15 @@
+:host ::ng-deep .p-slider {
+  .p-slider-handle {
+    background-color: var(--color-secondary) !important;
+    border-color: var(--color-secondary) !important;
+
+    &:hover {
+      background-color: var(--color-secondary-dark, #00C7B7) !important;
+    }
+  }
+
+  .p-slider-bar {
+    background-color: var(--color-secondary) !important;
+  }
+}
+

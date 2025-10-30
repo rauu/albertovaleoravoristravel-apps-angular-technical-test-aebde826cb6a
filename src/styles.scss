@@ -1,0 +1,35 @@
+/* Tailwind directives */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* You can add global styles to this file, and also import other style files */
+
+/* PrimeIcons */
+@import "primeicons/primeicons.css";
+
+/* Avoris Travel Color Palette - Modern & Professional */
+:root {
+  --color-primary: #003DA5;           /* Azul oscuro Avoris (más oscuro) */
+  --color-primary-light: #0052CC;     /* Azul claro */
+  --color-secondary: #00D084;         /* Verde mint/teal moderno */
+  --color-accent: #00C7B7;            /* Teal acento */
+  --color-danger: #FF5757;            /* Rojo moderno para alerts */
+  --color-neutral-50: #F8F9FA;
+  --color-neutral-100: #F0F2F5;
+  --color-neutral-200: #E9ECEF;
+  --color-neutral-300: #DEE2E6;
+  --color-neutral-600: #6C757D;
+  --color-neutral-900: #212529;
+}
+
+/* Global Styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: #f8f9fa;
+}
