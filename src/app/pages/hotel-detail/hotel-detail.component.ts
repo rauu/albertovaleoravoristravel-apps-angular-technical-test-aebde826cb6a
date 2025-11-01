@@ -1,26 +1,26 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, signal, inject, computed, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { SelectModule } from 'primeng/select';
 import { DatePickerModule } from 'primeng/datepicker';
 import { HotelsService } from '../../services/api/hotels.service';
 import { Hotel } from '../../services/api/models/hotel.model';
 import { Meta, Title } from '@angular/platform-browser';
-import { Subscription } from 'rxjs';
+import { Subscription, catchError, distinctUntilChanged, map, of, startWith, switchMap } from 'rxjs';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-hotel-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule, SelectModule, DatePickerModule],
+  imports: [CommonModule, FormsModule, TranslateModule, SelectModule, DatePickerModule, RouterLink],
   templateUrl: './hotel-detail.component.html',
   styleUrl: './hotel-detail.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HotelDetailComponent implements OnInit, OnDestroy {
   hotel?: Hotel;
-  loading = signal<boolean>(true);
 
   selectedGuests = 1;
   readonly guestOptions = signal<{ label: string; value: number }[]>([]);
@@ -30,14 +30,45 @@ export class HotelDetailComponent implements OnInit, OnDestroy {
   minCheckOutDate = this.minCheckInDate;
   private readonly subscriptions = new Subscription();
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private hotelsService: HotelsService,
-    private translate: TranslateService,
-    private title: Title,
-    private meta: Meta
-  ) {}
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly hotelsService = inject(HotelsService);
+  private readonly translate = inject(TranslateService);
+  private readonly title = inject(Title);
+  private readonly meta = inject(Meta);
+
+  private readonly hotelRequest = toSignal(
+    this.route.params.pipe(
+      map(params => params['id'] as string | undefined),
+      distinctUntilChanged(),
+      switchMap(id => {
+        if (!id) {
+          return of({ status: 'error' as const });
+        }
+        return this.hotelsService.getHotelById(id).pipe(
+          map(hotel => ({ status: 'success' as const, hotel })),
+          startWith({ status: 'loading' as const }),
+          catchError(() => of({ status: 'error' as const }))
+        );
+      })
+    ),
+    { initialValue: { status: 'loading' as const } }
+  );
+
+  readonly loading = computed<boolean>(() => this.hotelRequest().status === 'loading');
+  readonly error = computed<boolean>(() => this.hotelRequest().status === 'error');
+
+  constructor() {
+    effect(() => {
+      const state = this.hotelRequest();
+      if (state.status === 'success') {
+        this.hotel = state.hotel;
+        this.updateSeoMetadata();
+      } else if (state.status === 'error') {
+        this.hotel = undefined;
+      }
+    });
+  }
 
   ngOnInit() {
     this.initializeGuestOptions();
@@ -46,14 +77,6 @@ export class HotelDetailComponent implements OnInit, OnDestroy {
         this.initializeGuestOptions();
         if (this.hotel) {
           this.updateSeoMetadata();
-        }
-      })
-    );
-    this.subscriptions.add(
-      this.route.params.subscribe(params => {
-        const id = params['id'];
-        if (id) {
-          this.loadHotel(id);
         }
       })
     );
@@ -98,20 +121,6 @@ export class HotelDetailComponent implements OnInit, OnDestroy {
     }
 
     this.checkOutDate = normalizedDate;
-  }
-
-  loadHotel(id: string) {
-    this.loading.set(true);
-    this.hotelsService.getHotelById(id).subscribe({
-      next: (hotel) => {
-        this.hotel = hotel;
-        this.loading.set(false);
-        this.updateSeoMetadata();
-      },
-      error: () => {
-        this.loading.set(false);
-      }
-    });
   }
 
   goBack() {

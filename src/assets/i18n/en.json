@@ -25,7 +25,9 @@
     "hotelName": "Hotel Name",
     "searchByName": "Search by name...",
     "stars": "Stars",
-    "price": "Price"
+    "price": "Price",
+    "errorLoading": "We couldn't load the hotels right now.",
+    "errorDescription": "Please check your connection and try again."
   },
   "detail": {
     "address": "Address",
@@ -36,6 +38,10 @@
     "checkOut": "Check-out",
     "guests": "Guests",
     "notFound": "Hotel not found",
+    "notFoundDescription": "The stay you were looking for may have moved or is temporarily unavailable. Let’s get you back to the list and keep exploring.",
+    "exploreHotels": "Explore all hotels",
+    "errorLoading": "We couldn't load this hotel right now.",
+    "errorDescription": "Please refresh or try again in a few moments.",
     "backToList": "Back to List",
     "pool": "Pool",
     "restaurant": "Restaurant",
@@ -59,5 +65,8 @@
     "homeDescription": "Browse and compare Avoristech Travel hotels by name, stars, rating and price to plan your stay.",
     "detailTitle": "{{ hotel }} | Avoristech Travel",
     "detailDescription": "Discover {{ hotel }}, rated {{ rating }}/5 and available from {{ price }} per night with Avoristech Travel."
+  },
+  "common": {
+    "retry": "Retry"
   }
 }

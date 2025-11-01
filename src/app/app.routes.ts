@@ -8,5 +8,14 @@ export const routes: Routes = [
   {
     path: 'hotel/:id',
     loadComponent: () => import('./pages/hotel-detail/hotel-detail.component').then(m => m.HotelDetailComponent)
+  },
+  {
+    path: 'hotel',
+    pathMatch: 'full',
+    redirectTo: ''
+  },
+  {
+    path: '**',
+    redirectTo: ''
   }
 ];

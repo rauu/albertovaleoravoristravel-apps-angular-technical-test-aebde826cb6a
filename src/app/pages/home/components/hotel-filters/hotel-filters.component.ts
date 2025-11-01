@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, Output, EventEmitter } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SliderModule } from 'primeng/slider';
@@ -13,17 +13,17 @@ import { TranslateModule } from '@ngx-translate/core';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HotelFiltersComponent {
-  @Input() nameFilter: string = '';
-  @Input() selectedStars: number[] = [];
-  @Input() ratingValue: number = 0;
-  @Input() priceValue: number = 1000;
-  @Input() starsOptions: number[] = [1, 2, 3, 4, 5];
+  readonly nameFilter = input<string>('');
+  readonly selectedStars = input<number[]>([]);
+  readonly ratingValue = input<number>(0);
+  readonly priceValue = input<number>(1000);
+  readonly starsOptions = input<number[]>([1, 2, 3, 4, 5]);
 
-  @Output() onNameChangeOutput = new EventEmitter<string>();
-  @Output() onStarToggleOutput = new EventEmitter<number>();
-  @Output() onRatingChangeOutput = new EventEmitter<number>();
-  @Output() onPriceChangeOutput = new EventEmitter<number>();
-  @Output() onClearFiltersOutput = new EventEmitter<void>();
+  readonly onNameChangeOutput = output<string>();
+  readonly onStarToggleOutput = output<number>();
+  readonly onRatingChangeOutput = output<number>();
+  readonly onPriceChangeOutput = output<number>();
+  readonly onClearFiltersOutput = output<void>();
 
   onNameChange(value: string) {
     this.onNameChangeOutput.emit(value);
@@ -50,7 +50,7 @@ export class HotelFiltersComponent {
   }
 
   isStarChecked(star: number): boolean {
-    return this.selectedStars.includes(star);
+    return this.selectedStars().includes(star);
   }
 
   trackByStar(index: number, star: number): number {

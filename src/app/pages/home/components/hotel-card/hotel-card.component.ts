@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, Output, EventEmitter } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
@@ -14,10 +14,13 @@ import { Hotel } from '../../../../services/api/models/hotel.model';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HotelCardComponent {
-  @Input() hotel?: Hotel;
-  @Output() onViewDetails = new EventEmitter<string>();
+  readonly hotel = input<Hotel>();
+  readonly onViewDetails = output<string>();
 
   viewDetails() {
-    this.onViewDetails.emit(this.hotel?.id);
+    const hotelId = this.hotel()?.id;
+    if (hotelId) {
+      this.onViewDetails.emit(hotelId);
+    }
   }
 }

@@ -12,7 +12,7 @@
       </label>
       <input #nameInput id="hotel-name-filter" type="text"
         class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-color-secondary"
-        [value]="nameFilter" (input)="onNameChange(nameInput.value)" [placeholder]="'home.searchByName' | translate"
+        [value]="nameFilter()" (input)="onNameChange(nameInput.value)" [placeholder]="'home.searchByName' | translate"
         autocomplete="off" />
     </div>
 
@@ -20,7 +20,7 @@
     <div class="flex flex-col gap-2" role="group" aria-labelledby="hotel-stars-label">
       <span class="font-semibold text-color-primary text-sm" id="hotel-stars-label">{{ 'home.stars' | translate }}</span>
       <div class="flex gap-2 flex-wrap">
-        @for (star of starsOptions; track trackByStar($index, star)) {
+        @for (star of starsOptions(); track trackByStar($index, star)) {
         <button (click)="toggleStar(star)"
           [style.backgroundColor]="isStarChecked(star) ? 'var(--color-secondary)' : 'white'"
           [style.borderColor]="isStarChecked(star) ? 'var(--color-secondary)' : '#d0d0d0'"
@@ -36,18 +36,20 @@
     <!-- Rating Filter -->
     <div class="flex flex-col gap-2" role="group" aria-labelledby="hotel-rating-label">
       <span class="font-semibold text-color-primary text-sm" id="hotel-rating-label">{{ 'home.rating' | translate }}: {{
-        ratingValue.toFixed(2) }}</span>
-      <p-slider [ngModel]="ratingValue" (onSlideEnd)="onRatingChange($event.value)" [min]="0" [max]="5" [step]="0.1"
-        class="w-full" [attr.aria-label]="('home.rating' | translate)">
+        ratingValue().toFixed(2) }}</span>
+      <p-slider [ngModel]="ratingValue()" [ngModelOptions]="{ standalone: true }"
+        (onSlideEnd)="onRatingChange($event.value)" [min]="0" [max]="5" [step]="0.1" class="w-full"
+        [attr.aria-label]="('home.rating' | translate)">
       </p-slider>
     </div>
 
     <!-- Price Filter -->
     <div class="flex flex-col gap-2" role="group" aria-labelledby="hotel-price-label">
       <span class="font-semibold text-color-primary text-sm" id="hotel-price-label">{{ 'home.price' | translate }}: {{
-        (priceValue | currency: 'EUR': 'symbol': '1.0-0') }}</span>
-      <p-slider [ngModel]="priceValue" (onSlideEnd)="onPriceChange($event.value)" [min]="50" [max]="1000" [step]="10"
-        class="w-full" [attr.aria-label]="('home.price' | translate)">
+        (priceValue() | currency: 'EUR': 'symbol': '1.0-0') }}</span>
+      <p-slider [ngModel]="priceValue()" [ngModelOptions]="{ standalone: true }"
+        (onSlideEnd)="onPriceChange($event.value)" [min]="50" [max]="1000" [step]="10" class="w-full"
+        [attr.aria-label]="('home.price' | translate)">
       </p-slider>
     </div>
   </div>

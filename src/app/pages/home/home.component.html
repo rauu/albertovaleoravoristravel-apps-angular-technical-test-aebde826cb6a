@@ -5,6 +5,19 @@
       <p class="text-gray-600">{{ 'home.loading' | translate }}</p>
     </div>
   </section>
+} @else if (error()) {
+  <section class="flex flex-col items-center justify-center h-screen bg-gray-50 gap-6" role="alert" aria-live="assertive">
+    <div class="text-center max-w-md">
+      <h2 class="text-2xl font-semibold text-color-primary mb-2">{{ 'home.errorLoading' | translate }}</h2>
+      <p class="text-gray-600 text-sm">{{ 'home.errorDescription' | translate }}</p>
+    </div>
+    <button
+      type="button"
+      (click)="retryLoad()"
+      class="px-6 py-2 text-white text-sm font-semibold rounded-lg transition bg-color-secondary hover:shadow-lg">
+      {{ 'common.retry' | translate }}
+    </button>
+  </section>
 } @else {
   <section class="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100" aria-labelledby="hotels-heading">
     <!-- Header -->

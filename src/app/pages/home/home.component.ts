@@ -1,14 +1,14 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, signal, effect } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, signal, effect, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute, Params } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PaginatorModule } from 'primeng/paginator';
-import { HotelsService } from '../../services/api/hotels.service';
+import { HotelsService, PaginatedResponse } from '../../services/api/hotels.service';
 import { HotelsQueryParams } from '../../models/hotels-query-params.model';
 import { HotelCardComponent } from './components/hotel-card/hotel-card.component';
 import { HotelFiltersComponent } from './components/hotel-filters/hotel-filters.component';
-import { HomeStateService } from '../../services/home-state.service';
-import { debounceTime, Subject, Subscription } from 'rxjs';
+import { debounceTime, Subject, Subscription, switchMap, catchError, of, startWith, map } from 'rxjs';
+import { toSignal, toObservable } from '@angular/core/rxjs-interop';
 import { Hotel } from '../../services/api/models/hotel.model';
 import { Meta, Title } from '@angular/platform-browser';
 
@@ -21,124 +21,175 @@ import { Meta, Title } from '@angular/platform-browser';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HomeComponent implements OnInit, OnDestroy {
-  hotels = signal<Hotel[]>([]);
-  totalRecords = signal<number>(0);
-  loading = signal<boolean>(false);
-  showFilters = signal<boolean>(false);
-  nameFilter = signal<string>('');
-  selectedStars = signal<number[]>([]);
-  ratingValue = signal<number>(0);
-  priceValue = signal<number>(1000);
-  currentPage = signal<number>(1);
+  private readonly hotelsService = inject(HotelsService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly translate = inject(TranslateService);
+  private readonly title = inject(Title);
+  private readonly meta = inject(Meta);
 
-  pageSize = 10;
-  starsOptions = [1, 2, 3, 4, 5];
+  readonly showFilters = signal<boolean>(false);
+  readonly pageSize = 10;
+  readonly starsOptions = [1, 2, 3, 4, 5];
 
-  private filterSubject = new Subject<void>();
+  private readonly filterSubject = new Subject<void>();
   private readonly subscriptions = new Subscription();
+  private pendingFilters: any = {};
 
-  constructor(
-    private hotelsService: HotelsService,
-    private router: Router,
-    private homeStateService: HomeStateService,
-    private translate: TranslateService,
-    private title: Title,
-    private meta: Meta
-  ) {
+  // Read filters from URL queryParams
+  private readonly queryParams = toSignal(this.route.queryParams, { initialValue: {} as Params });
+
+  // Derived signals from URL state
+  readonly nameFilter = computed(() => {
+    const params = this.queryParams();
+    return (params['name'] as string) || '';
+  });
+
+  readonly selectedStars = computed(() => {
+    const params = this.queryParams();
+    const stars = params['stars'];
+    if (!stars) return [];
+    return Array.isArray(stars) ? stars.map(Number) : [Number(stars)];
+  });
+
+  readonly ratingValue = computed(() => {
+    const params = this.queryParams();
+    return Number(params['rating']) || 0;
+  });
+
+  readonly priceValue = computed(() => {
+    const params = this.queryParams();
+    return Number(params['price']) || 1000;
+  });
+
+  readonly currentPage = computed(() => {
+    const params = this.queryParams();
+    return Number(params['page']) || 1;
+  });
+
+  // Build query params for API from URL state
+  private readonly apiQueryParams = computed<HotelsQueryParams>(() => ({
+    page: this.currentPage(),
+    limit: this.pageSize,
+    name: this.nameFilter() || undefined,
+    stars: this.selectedStars().length > 0 ? this.selectedStars() : undefined,
+    minRating: this.ratingValue() > 0 ? this.ratingValue() : undefined,
+    maxPrice: this.priceValue() < 1000 ? this.priceValue() : undefined
+  }));
+
+  // Convert apiQueryParams signal to observable for reactive HTTP calls
+  private readonly apiQueryParams$ = toObservable(this.apiQueryParams);
+
+  // Reactive HTTP call that responds to URL changes
+  private readonly hotelsState = toSignal(
+    this.apiQueryParams$.pipe(
+      switchMap(params =>
+        this.hotelsService.getHotels(params).pipe(
+          map(response => ({ status: 'success' as const, response })),
+          startWith({ status: 'loading' as const }),
+          catchError(() => of({ status: 'error' as const }))
+        )
+      )
+    ),
+    { initialValue: { status: 'loading' as const } }
+  );
+
+  // Computed values from state
+  readonly hotels = computed<Hotel[]>(() => {
+    const state = this.hotelsState();
+    return state && state.status === 'success' ? state.response.items : [];
+  });
+
+  readonly totalRecords = computed<number>(() => {
+    const state = this.hotelsState();
+    return state && state.status === 'success' ? state.response.total : 0;
+  });
+
+  readonly loading = computed<boolean>(() => {
+    const state = this.hotelsState();
+    return state?.status === 'loading';
+  });
+
+  readonly error = computed<boolean>(() => {
+    const state = this.hotelsState();
+    return state?.status === 'error';
+  });
+
+  constructor() {
     this.subscriptions.add(
       this.filterSubject.pipe(debounceTime(500)).subscribe(() => {
-        this.currentPage.set(1);
-        this.loadHotels();
+        // Apply pending filters to URL after debounce
+        this.router.navigate([], {
+          relativeTo: this.route,
+          queryParams: {
+            ...this.pendingFilters,
+            page: undefined // Reset page when filters change
+          },
+          queryParamsHandling: 'merge'
+        });
+        this.pendingFilters = {}; // Clear pending filters
       })
     );
 
-  this.subscriptions.add(this.translate.onLangChange.subscribe(() => this.updateSeoMetadata()));
-
-    effect(() => {
-      this.homeStateService.saveState({
-        nameFilter: this.nameFilter(),
-        selectedStars: this.selectedStars(),
-        ratingValue: this.ratingValue(),
-        priceValue: this.priceValue(),
-        currentPage: this.currentPage()
-      });
-    });
+    this.subscriptions.add(this.translate.onLangChange.subscribe(() => this.updateSeoMetadata()));
   }
 
   ngOnInit() {
-    const savedState = this.homeStateService.getState();
-    this.nameFilter.set(savedState.nameFilter);
-    this.selectedStars.set(savedState.selectedStars);
-    this.ratingValue.set(savedState.ratingValue);
-    this.priceValue.set(savedState.priceValue);
-    this.currentPage.set(savedState.currentPage);
-    this.loadHotels();
     this.updateSeoMetadata();
   }
 
-  loadHotels() {
-    this.loading.set(true);
-
-    const params: HotelsQueryParams = {
-      page: this.currentPage(),
-      limit: this.pageSize,
-      name: this.nameFilter() || undefined,
-      stars: this.selectedStars().length > 0 ? this.selectedStars() : undefined,
-      minRating: this.ratingValue() > 0 ? this.ratingValue() : undefined,
-      minPrice: this.priceValue() < 1000 ? 50 : undefined,
-      maxPrice: this.priceValue()
-    };
-
-    this.hotelsService.getHotels(params).subscribe({
-      next: (response) => {
-        this.hotels.set(response.items);
-        this.totalRecords.set(response.total);
-        this.loading.set(false);
-      },
-      error: () => {
-        this.loading.set(false);
-      }
-    });
-  }
-
   onNameChange(value: string) {
-    this.nameFilter.set(value);
+    // Store value temporarily and trigger debounced update
+    this.pendingFilters.name = value || undefined;
     this.filterSubject.next();
   }
 
   toggleStar(star: number) {
     const stars = this.selectedStars();
-    this.selectedStars.set(stars.includes(star) ? stars.filter(s => s !== star) : [...stars, star]);
+    const newStars = stars.includes(star) ? stars.filter(s => s !== star) : [...stars, star];
+
+    this.pendingFilters.stars = newStars.length > 0 ? newStars : undefined;
     this.filterSubject.next();
   }
 
   onRatingChange(value: number) {
-    this.ratingValue.set(value);
+    this.pendingFilters.rating = value > 0 ? value : undefined;
     this.filterSubject.next();
   }
 
   onPriceChange(value: number) {
-    this.priceValue.set(value);
+    this.pendingFilters.price = value < 1000 ? value : undefined;
     this.filterSubject.next();
   }
 
   onPageChange(event: any) {
     const pageNumber = Math.floor(event.first / event.rows) + 1;
-    this.currentPage.set(pageNumber);
-    this.loadHotels();
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { page: pageNumber > 1 ? pageNumber : undefined },
+      queryParamsHandling: 'merge'
+    });
   }
 
   toggleFilters() {
     this.showFilters.update(value => !value);
   }
 
+  retryLoad() {
+    // Trigger reload by updating URL (forces new API call)
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: this.queryParams(),
+      queryParamsHandling: 'merge'
+    });
+  }
+
   clearFilters() {
-    this.nameFilter.set('');
-    this.selectedStars.set([]);
-    this.ratingValue.set(0);
-    this.priceValue.set(1000);
-    this.currentPage.set(1);
-    this.filterSubject.next();
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {}
+    });
   }
 
   trackByHotelId(index: number, hotel: Hotel): string {
