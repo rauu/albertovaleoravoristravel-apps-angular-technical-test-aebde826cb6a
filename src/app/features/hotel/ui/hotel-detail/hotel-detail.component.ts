@@ -5,11 +5,11 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { SelectModule } from 'primeng/select';
 import { DatePickerModule } from 'primeng/datepicker';
-import { HotelsService } from '../../services/api/hotels.service';
-import { Hotel } from '../../services/api/models/hotel.model';
 import { Meta, Title } from '@angular/platform-browser';
 import { Subscription, catchError, distinctUntilChanged, map, of, startWith, switchMap } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { HotelsService } from '../../../../services/hotels.service';
+import { Hotel } from '../../../../shared/models/hotel.model';
 
 @Component({
   selector: 'app-hotel-detail',

@@ -3,14 +3,15 @@ import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PaginatorModule } from 'primeng/paginator';
-import { HotelsService, PaginatedResponse } from '../../services/api/hotels.service';
-import { HotelsQueryParams } from '../../models/hotels-query-params.model';
+import { HOTEL_DEFAULT_PAGE_SIZE } from '../../utils/hotel.constants';
 import { HotelCardComponent } from './components/hotel-card/hotel-card.component';
 import { HotelFiltersComponent } from './components/hotel-filters/hotel-filters.component';
 import { debounceTime, Subject, Subscription, switchMap, catchError, of, startWith, map } from 'rxjs';
 import { toSignal, toObservable } from '@angular/core/rxjs-interop';
-import { Hotel } from '../../services/api/models/hotel.model';
 import { Meta, Title } from '@angular/platform-browser';
+import { HotelsService } from '../../../../services/hotels.service';
+import { Hotel } from '../../../../shared/models/hotel.model';
+import { HotelsQueryParams } from '../../../../shared/models/hotels-query-params.model';
 
 @Component({
   selector: 'app-home',
@@ -29,7 +30,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   private readonly meta = inject(Meta);
 
   readonly showFilters = signal<boolean>(false);
-  readonly pageSize = 10;
+  readonly pageSize = HOTEL_DEFAULT_PAGE_SIZE;
   readonly starsOptions = [1, 2, 3, 4, 5];
 
   private readonly filterSubject = new Subject<void>();

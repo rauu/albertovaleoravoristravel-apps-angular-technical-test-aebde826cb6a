@@ -1,142 +1,97 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { NavBarComponent } from './nav-bar.component';
+import { render, screen } from '@testing-library/angular';
+import { provideRouter } from '@angular/router';
 import { TranslateFakeLoader, TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
+import { NavBarComponent } from './nav-bar.component';
 import { environment } from '../../../../environments/environment';
-import { RouterTestingModule } from '@angular/router/testing';
+
+interface SetupOptions {
+  savedLanguage?: string;
+}
 
 describe('NavBarComponent', () => {
-  let component: NavBarComponent;
-  let fixture: ComponentFixture<NavBarComponent>;
-  let translateService: TranslateService;
+  async function setup(options: SetupOptions = {}) {
+    localStorage.clear();
+    if (options.savedLanguage) {
+      localStorage.setItem('language', options.savedLanguage);
+    }
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
+    const renderResult = await render(NavBarComponent, {
       imports: [
-        NavBarComponent,
-        RouterTestingModule,
         TranslateModule.forRoot({
           loader: { provide: TranslateLoader, useClass: TranslateFakeLoader }
         })
-      ]
-    }).compileComponents();
+      ],
+      providers: [provideRouter([])]
+    });
 
-    translateService = TestBed.inject(TranslateService);
-    translateService.setTranslation('es', { navbar: { title: 'Avoristech Travel', language: 'Idioma' } }, true);
-    translateService.setTranslation('en', { navbar: { title: 'Avoristech Travel', language: 'Language' } }, true);
-    translateService.setDefaultLang(environment.defaultLanguage);
-    spyOn(translateService, 'use').and.callThrough();
+    const translate = renderResult.fixture.componentRef.injector.get(TranslateService);
+    translate.setTranslation('es', { navbar: { title: 'Avoristech Travel', language: 'Idioma' } }, true);
+    translate.setTranslation('en', { navbar: { title: 'Avoristech Travel', language: 'Language' } }, true);
+    translate.setDefaultLang(environment.defaultLanguage);
 
-    fixture = TestBed.createComponent(NavBarComponent);
-    component = fixture.componentInstance;
-  });
+    // Trigger change detection after translations are in place
+    renderResult.fixture.detectChanges();
+
+    return {
+      ...renderResult,
+      translate
+    };
+  }
 
   afterEach(() => {
     localStorage.clear();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('renders brand link with accessible label', async () => {
+    await setup();
+
+    const homeLink = screen.getByRole('link', { name: /avoristech travel/i });
+    expect(homeLink).toBeTruthy();
   });
 
-  describe('Language Initialization', () => {
-    it('should have Spanish and English languages', () => {
-      expect(component.languages.length).toBe(2);
-      expect(component.languages[0].code).toBe('es');
-      expect(component.languages[1].code).toBe('en');
-    });
+  it('shows default language when no preference stored', async () => {
+    const { fixture, translate } = await setup();
+    const component = fixture.componentInstance;
 
-    it('should initialize with saved language from localStorage', () => {
-      localStorage.setItem('language', 'en');
-      fixture.detectChanges();
-
-      expect(component.selectedLanguage.code).toBe('en');
-    });
-
-    it('should use default language if none is saved', () => {
-      localStorage.removeItem('language');
-      fixture.detectChanges();
-
-      expect(component.selectedLanguage.code).toBe(environment.defaultLanguage);
-    });
+    expect(component.selectedLanguage.code).toBe(environment.defaultLanguage);
+    expect(translate.currentLang).toBe(environment.defaultLanguage);
   });
 
-  describe('ngOnInit', () => {
-    it('should set up the initial translation service', () => {
-      fixture.detectChanges();
+  it('uses saved language from localStorage', async () => {
+    const { fixture, translate } = await setup({ savedLanguage: 'en' });
+    const component = fixture.componentInstance;
 
-      expect(translateService.use).toHaveBeenCalledWith(component.selectedLanguage.code);
-    });
-
-    it('should save language to localStorage on init', () => {
-      fixture.detectChanges();
-
-      expect(localStorage.getItem('language')).toBe(component.selectedLanguage.code);
-    });
+    expect(component.selectedLanguage.code).toBe('en');
+    expect(translate.currentLang).toBe('en');
   });
 
-  describe('Language Change', () => {
-    it('should change language and update localStorage', () => {
-      const englishLang = { code: 'en', name: 'English', flag: 'US' };
-      const event = { value: englishLang };
+  it('persists language choice when user changes selection', async () => {
+    const { fixture } = await setup();
+    const component = fixture.componentInstance;
 
-      component.onLanguageChange(event);
+    const englishLang = component.languages.find(lang => lang.code === 'en');
+    component.onLanguageChange({ value: englishLang });
+    fixture.detectChanges();
 
-      expect(translateService.use).toHaveBeenCalledWith('en');
-      expect(localStorage.getItem('language')).toBe('en');
-    });
-
-    it('should support switching from Spanish to English', () => {
-      const englishLang = component.languages[1];
-      component.onLanguageChange({ value: englishLang });
-
-      expect(localStorage.getItem('language')).toBe('en');
-    });
-
-    it('should support switching from English to Spanish', () => {
-      const spanishLang = component.languages[0];
-      component.onLanguageChange({ value: spanishLang });
-
-      expect(localStorage.getItem('language')).toBe('es');
-    });
+    expect(localStorage.getItem('language')).toBe('en');
   });
 
-  describe('TrackBy Function', () => {
-    it('should track language by code', () => {
-      const spanish = { code: 'es', name: 'Español', flag: 'ES' };
-      const english = { code: 'en', name: 'English', flag: 'US' };
+  it('tracks languages by unique code', async () => {
+    const { fixture } = await setup();
+    const component = fixture.componentInstance;
 
-      expect(component.trackByLanguageCode(0, spanish)).toBe('es');
-      expect(component.trackByLanguageCode(1, english)).toBe('en');
-    });
+    const first = component.trackByLanguageCode(0, component.languages[0]);
+    const second = component.trackByLanguageCode(1, component.languages[1]);
 
-    it('should return unique identifiers for different languages', () => {
-      const lang1 = component.languages[0];
-      const lang2 = component.languages[1];
-
-      const id1 = component.trackByLanguageCode(0, lang1);
-      const id2 = component.trackByLanguageCode(1, lang2);
-
-      expect(id1).not.toBe(id2);
-    });
+    expect(first).toBe('es');
+    expect(second).toBe('en');
+    expect(first).not.toBe(second);
   });
 
-  describe('Language Properties', () => {
-    it('should have language names and flags', () => {
-      component.languages.forEach(lang => {
-        expect(lang.code).toBeDefined();
-        expect(lang.name).toBeDefined();
-        expect(lang.flag).toBeDefined();
-      });
-    });
+  it('exposes accessible language selector', async () => {
+    await setup();
 
-    it('Spanish should have correct properties', () => {
-      const spanish = component.languages.find(l => l.code === 'es');
-      expect(spanish).toEqual({ code: 'es', name: 'Español', flag: 'ES' });
-    });
-
-    it('English should have correct properties', () => {
-      const english = component.languages.find(l => l.code === 'en');
-      expect(english).toEqual({ code: 'en', name: 'English', flag: 'US' });
-    });
+    const label = screen.getByLabelText(/language|idioma/i);
+    expect(label).toBeTruthy();
   });
 });

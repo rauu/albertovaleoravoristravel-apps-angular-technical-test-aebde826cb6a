@@ -1,4 +1,4 @@
-import { Hotel } from "../../services/api/models/hotel.model";
+import { Hotel } from "../../../shared/models/hotel.model";
 
 export class HotelFactory {
   static fromDto(dto: any): Hotel {

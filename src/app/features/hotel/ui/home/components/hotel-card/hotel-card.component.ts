@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { TranslateModule } from '@ngx-translate/core';
-import { Hotel } from '../../../../services/api/models/hotel.model';
+import { Hotel } from '../../../../../../shared/models/hotel.model';
 
 @Component({
   selector: 'app-hotel-card',

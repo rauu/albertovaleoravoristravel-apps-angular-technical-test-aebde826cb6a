@@ -2,7 +2,7 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { SelectModule } from 'primeng/select';
 import { FormsModule } from '@angular/forms';
-import { Language } from '../../../models/language.model';
+import { Language } from '../../models/language.model';
 import { environment } from '../../../../environments/environment';
 import { RouterLink } from "@angular/router";
 

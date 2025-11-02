@@ -1,9 +1,9 @@
 import { HttpClient, HttpParams, HttpResponse, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable, map } from "rxjs";
-import { environment } from '../../../environments/environment';
-import { Hotel } from "./models/hotel.model";
-import { HotelsQueryParams } from "../../models/hotels-query-params.model";
+import { environment } from '../../environments/environment';
+import { Hotel } from "../shared/models/hotel.model";
+import { HotelsQueryParams } from "../shared/models/hotels-query-params.model";
 
 export interface PaginatedResponse<T> {
   items: T[];

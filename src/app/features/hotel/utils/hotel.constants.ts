@@ -1,0 +1,1 @@
+export const HOTEL_DEFAULT_PAGE_SIZE = 12;
